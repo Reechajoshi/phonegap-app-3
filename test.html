@@ -1,0 +1,1152 @@
+<!doctype html>
+<html>
+<head>
+	<title> jQuery Mobile Boilerplate </title>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+
+	<!-- Home screen icon  Mathias Bynens mathiasbynens.be/notes/touch-icons -->
+	<!-- For iPhone 4 with high-resolution Retina display: -->
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="apple-touch-icon.png">
+	<!-- For first-generation iPad: -->
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="apple-touch-icon.png">
+	<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
+	<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+	<!-- For nokia devices and desktop browsers : -->
+	<link rel="shortcut icon" href="favicon.ico" />
+
+	<!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
+	<meta http-equiv="cleartype" content="on">
+
+	<!-- jQuery Mobile CSS bits -->
+	<link rel="stylesheet" href="css/jquery.mobile-1.4.0.min.css" />
+	
+	<link rel="stylesheet" href="css/font-awesome.min.css" />
+	<link rel="stylesheet" href="css/jquery-ui.css" />
+
+	<!-- Custom css -->
+	<link rel="stylesheet" href="css/custom.css" />
+	<link rel="stylesheet" href="css/font_mirari.css" />
+	<!--<link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+ -->
+	<!-- Javascript includes -->
+	
+	<!--<script src="js/index.js"></script>-->
+	<script src="js/jquery-1.10.2.js"></script>
+	<script src="js/mobileinit.js"></script>
+	<script src="js/ios-orientationchange-fix.min.js"></script>
+	<script src="js/jquery.mobile-1.4.0.js"></script>
+	
+	
+	<script src="js/jquery-ui.js"></script>
+	<script src="js/jquery.easing.js"></script>
+	<script src="js/application.js"></script>
+	<script src="cordova.js"></script>
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBvqmnD5FebnAHGgXotW6hgHospGC5c_xU"></script>
+	
+	<script type="text/javascript" charset="utf-8">
+    var pictureSource;   // picture source
+    var destinationType; // sets the format of returned value 
+    // Wait for PhoneGap to connect with the device
+    //
+    document.addEventListener("deviceready",onDeviceReady,false);
+    // PhoneGap is ready to be used!
+    //
+    function onDeviceReady() {
+        pictureSource=navigator.camera.PictureSourceType;
+        destinationType=navigator.camera.DestinationType;
+    }
+    // Called when a photo is successfully retrieved
+    //
+    
+ $(document).ready(function () {
+    function onPhotoDataSuccess(imageData) {
+      // Get image handle
+      //
+      var smallImage = document.getElementById('logo_img');
+      // Unhide image elements
+      //
+      smallImage.style.display = 'block';
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      smallImage.src = "data:image/jpeg;base64," + imageData;
+    }
+    
+	// Called when a photo is successfully retrieved
+    //
+    function onPhotoFileSuccess(imageData) {
+      // Get image handle
+      console.log(JSON.stringify(imageData));
+      
+   	  // Get image handle
+      //
+     // var smallImage = document.getElementById('logo_img');
+      // Unhide image elements
+      //
+     // smallImage.style.display = 'block';
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      //smallImage.src = imageData;
+      movePic1(imageData)
+    }
+    // Called when a photo is successfully retrieved
+    //
+    function onPhotoURISuccess(imageURI) {
+      // Uncomment to view the image file URI 
+      // console.log(imageURI);
+      // Get image handle
+      //
+      var largeImage = document.getElementById('logo_img');
+      // Unhide image elements
+      //
+      largeImage.style.display = 'block';
+      // Show the captured photo
+      // The inline CSS rules are used to resize the image
+      //
+      largeImage.src = imageURI;
+	  
+     	uploadPhoto(imageURI);
+    }
+    // A button will call this function
+    //
+    function capturePhotoWithData() {
+      // Take picture using device camera and retrieve image as base64-encoded string
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50 });
+    }
+    function capturePhotoWithFile() {
+	alert('Failed because: ');
+        navigator.camera.getPicture(onPhotoFileSuccess, onFail, { quality: 50, destinationType: Camera.DestinationType.FILE_URI });
+    }
+    
+    // A button will call this function
+    //
+    function getPhoto(source) {
+    alert('Failed because: ');
+      // Retrieve image file location from specified source
+      navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50, 
+        destinationType: navigator.camera.DestinationType.FILE_URI,
+        sourceType: navigator.camera.PictureSourceType.SAVEDPHOTOALBUM
+        });
+    }
+    // Called if something bad happens.
+    // 
+    function onFail(message) {
+      alert('Failed because: ' + message);
+    }
+    
+   function uploadPhoto(imageURI) {
+ var options = new FileUploadOptions();
+ options.fileKey = "file";
+ options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+ options.mimeType = "image/jpeg";
+ console.log(options.fileName);
+ var params = new Object();
+ params.value1 = "test";
+ params.value2 = "param";
+ options.params = params;
+ options.chunkedMode = false;
+
+var ft = new FileTransfer();
+ ft.upload(imageURI, "http://www.qikkle.com/Mirari/api/Registration/MyFileUpload", function(result){
+ console.log(JSON.stringify(result));
+ }, function(error){
+ console.log(JSON.stringify(error));
+ }, options);
+ } 
+
+
+function movePic1(file){ 
+	 window.resolveLocalFileSystemURL(file, resolveOnSuccess1, resOnError1); 
+} 
+
+//Callback function when the file system uri has been resolved
+function resolveOnSuccess1(entry){ 
+	alert("hi1");
+   // var d = new Date();
+    //var n = d.getDate()+""+(d.getMonth()+1)+""+d.getFullYear();//getTime();
+    //new file name
+   // seq=seq+1;
+    var newFileName ="img_123.jpg";
+	alert(newFileName);
+    var myFolderApp = "MirariApp";
+
+    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {      
+    //The folder is created if doesn't exist
+    fileSys.root.getDirectory( myFolderApp,
+                    {create:true, exclusive: false},
+                    function(directory) {
+                        entry.moveTo(directory, newFileName,  successMove1, resOnError1);
+                    },
+                    resOnError1);
+                    },
+    resOnError1);
+    
+}
+
+//Callback function when the file has been moved successfully - inserting the complete path
+function successMove1(entry) {
+    //Store imagepath in session for future use
+    // like to store it in database
+	alert(" Pic saved at "+entry.fullPath);
+   // sessionStorage.setItem('imagepath', entry.fullPath);
+    
+}
+
+function resOnError1(error) {
+    alert(" Error at "+JSON.stringify(error));
+}
+
+$("#register-2-logo-div").on("click",function(){
+	 getPhoto("");
+});
+
+$("#open-camera").on("click",function(){
+	 capturePhotoWithFile();
+});
+
+});
+    </script>
+	<!-- Startup Images for iDevices -->
+	<script>(function(){var a;if(navigator.platform==="iPad"){a=window.orientation!==90||window.orientation===-90?"images/startup-tablet-landscape.png":"images/startup-tablet-portrait.png"}else{a=window.devicePixelRatio===2?"images/startup-retina.png":"images/startup.png"}document.write('<link rel="apple-touch-startup-image" href="'+a+'"/>')})()</script>
+	<!-- The script prevents links from opening in mobile safari. https://gist.github.com/1042026 -->
+	<script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
+</head>
+<body>
+
+
+	<!-- SPLASH SCREEN --> 
+	<div data-role="page" id="splash" style="background: #FFB900;padding: 0;" class="splash_page">
+		<div data-role="content" style="height: 100%;text-align:center;padding:0;">
+				<img src="images/splash.png" style="height:100%;width:100%;" alt="splash" />
+		</div>
+	</div>
+
+
+	<!-- LOGIN SCREEN -->
+	<div data-role="page" id="login-screen" style="background: #FFD900;">
+		<div data-role="content" class="main-page" style="text-align: center;text-shadow:none;">
+			<div class="welcome-text">
+				<div><img src="images/mirari-logo1.png"></div>
+				<div class="sepearator"></div>
+				<div><img src="images/merch-logo.png"></div>
+			</div>
+			<!-- <div style="margin-top: 30px;"><a onclick="$('#login').toggle();" style="color: white;" href="#">Login</a></div> -->
+			<div id="login" class="index-links">
+				<form id="form-login">
+					<input class="custom-input" type="text" placeholder="Username" data-role="none" id="login-username">
+					<input class="custom-input" type="password" placeholder="Password" data-role="none" id="login-password">
+					<div style="margin: 40px 0;" class="login-submit-container"><input type="submit" onclick="return performLogin();" class="btn-login" value="Sign In" data-role="none"></div>
+					<!-- <div style="margin: 40px 0;" class="login-submit-container"><button type="submit" class="btn-login-google" data-role="none">Sign In with Google</button></div> -->
+				</form>
+			</div>
+			<div id="login-register-btn"><a href="#" onclick="$.mobile.changePage('#register-screen-1', 'fade');">Register</a></div>
+		</div>
+
+	</div>
+	
+	<!-- REGISTER SCREEN 1 -->
+	<div data-role="page" id="register-screen-1">
+		<div data-role="content" class="main-page" style="text-align: center;text-shadow:none;">
+			<div class="custom-header">
+				Register Yourself
+			</div>
+			<div id="register-1" class="index-links">
+				<input class="custom-input transparent required" id="username" onblur="enableOTP(this);" type="text" placeholder="Username" data-role="none">
+				<input class="custom-input transparent required" id="email" onblur="enableOTP(this);" type="text" placeholder="Email Address" data-role="none">
+				<input class="custom-input transparent required" id="contact_number" onblur="enableOTP(this);" type="number" placeholder="Contact Number" data-role="none">
+				
+				<div style="margin: 40px 0;" id="send-otp-div" class="login-submit-container"><button id="send_otp" type="submit" onclick="sendOTP();" class="btn-register-gray" data-role="none" disabled>Send OTP via email</button></div>
+				
+				<div style="margin: 40px 0;display:none;" class="login-submit-container" id="otp-verify-div">
+					<div><input class="custom-input transparent code" onkeyup="validateOTP();" id="verify-code" maxlength="6" type="text" placeholder="——————" data-role="none"></div>
+					<div id="verify-resend-div">
+						<button type="submit" id="resend-btn" onclick="resendOTP();" class="btn-register-gray half" data-role="none">Resend</button><!--
+						--><button type="submit" id="verify-btn" onclick="verifyOTP();" class="btn-register-gray half" disabled data-role="none">Verify</button>
+					</div>
+					<div id="verify-result-div" style="display:none;">
+						<div type="submit" id="verify-code-fail" class="btn-register-green" data-role="none"><i class="fa fa-check" aria-hidden="true"></i> Verify</div>
+						<div type="submit" id="verify-code-success" class="btn-register-red" data-role="none"><i class="fa fa-refresh" aria-hidden="true"></i> Retry</div>
+					</div>
+				</div>
+			</div>
+			<div class="custom-footer">
+				<div class="footer-left"><a href="#" onclick="alert('cancel clicked');" class="no-format">Cancel</a></div>
+				<div class="footer-center">
+					<a href="#" class="no-format"><div id="footer-slide-1" class="selected"></div></a>
+					<a href="#" class="no-format"><div id="footer-slide-2"></div></a>
+					<a href="#" class="no-format"><div id="footer-slide-3"></div></a>
+				</div>
+				<div class="footer-right"><a href="#" onclick="validate_step_1();" class="no-format">Next ></a></div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- REGISTER SCREEN 2 -->
+	<div data-role="page" id="register-screen-2">
+		<div class="custom-header">
+			Register your company
+		</div>
+		<div id="register-2">
+			<div id="register-2-row-1">
+				<div id="register-2-logo-div">
+					<img id="logo_img" src="images/default-logo.png" style="heigth:100px;width:100px;" >
+				</div>
+				<div id="register-2-logo-desc-div">
+					This logo will be the display picture on all your posts. Prefer a square aspect ratio for best results. You can change it from settings.
+				</div>
+				<div class="clear"></div>
+			</div>
+			
+			<div id="register-2-row-2">
+				<input class="custom-input white required" id="company-name" type="text" placeholder="Company Name" data-role="none">
+				<input class="custom-input white required map-bg" id="company-address" type="text" placeholder="Address" data-role="none" onfocus="callmap();">
+				<input class="custom-input white" id="co-contact-number" type="number" placeholder="Contact Number" data-role="none">
+				<input class="custom-input white" onblur="validatCompanyEmail();" id="co-email" type="text" placeholder="Email Address" data-role="none">
+				<input class="custom-input white" id="co-website" type="text" placeholder="Website" data-role="none">
+			</div>
+			
+			<div id="register-2-row-3">
+				<input class="custom-input white" id="facebook-url" type="text" placeholder="Facebook Page URL" data-role="none">
+				<input class="custom-input white" id="twitter-url" type="text" placeholder="Twitter Page URL" data-role="none">
+			</div>
+		</div>
+		<div class="custom-footer" style="text-align:center;text-shadow:none;">
+			<div class="footer-left"><a href="#" onclick="alert('cancel clicked');" class="no-format">Cancel</a></div>
+			<div class="footer-center">
+				<a href="#" class="no-format"><div id="footer-slide-1"></div></a>
+				<a href="#" class="no-format"><div id="footer-slide-2" class="selected"></div></a>
+				<a href="#" class="no-format"><div id="footer-slide-3"></div></a>
+			</div>
+			<div class="footer-right"><a href="#" onclick="validate_step_2();" class="no-format">Next ></a></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	
+	
+	<!-- REGISTER SCREEN 2 --><!-- REGISTER SCREEN 2 -->
+	<div data-role="page" id="register-screen-3">
+		<div class="custom-header">
+			Checkout
+		</div>
+		<div id="register-3">
+			<div id="register-3-company-profile-div">
+				<div style="text-align:center;"><img style="width:40px;" src="images/company-profile.png"></div>
+				<div style="margin-top:5px;color:#A9ABB0;text-align:center;">Company Profile</div>
+				<div style="margin-top:10px;background:white;padding-right:5px;">
+					<div id="flip-1-val">
+						No
+					</div>
+					<div style="float:right;margin-right:10px;">
+						<select name="flip-1" id="flip-1" data-role="flipswitch">
+							<option value="No"></option>
+							<option value="Yes"></option>
+						</select>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div id="register-3-merchant-feeds-div">
+				<div style="text-align:center;"><img style="width:40px;" src="images/merchant-feeds.png"></div>
+				<div style="margin-top:5px;color:#A9ABB0;text-align:center;">Merchant Feeds</div>
+				<div style="margin-top:10px;background:white;padding-right:5px;">
+					<div id="flip-2-val">
+						No
+					</div>
+					<div style="float:right;margin-right:10px;">
+						<select name="flip-2" id="flip-2" data-role="flipswitch" class="custom-flip-switch">
+							<option value="No" selected=""></option>
+							<option value="Yes" ></option>
+						</select>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div id="register-3-chat-div">
+				<div style="text-align:center;"><img style="width:40px;" src="images/chat.png"></div>
+				<div style="margin-top:5px;color:#A9ABB0;text-align:center;">Chat with customers</div>
+				<div style="margin-top:10px;background:white;padding-right:5px;">
+					<div id="flip-3-val">
+						No
+					</div>
+					<div style="float:right;margin-right:10px;">
+						<select name="flip-3" id="flip-3" data-role="flipswitch">
+							<option value="No"></option>
+							<option value="Yes"></option>
+						</select>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div id="register-3-users-no-div">
+				<div style="text-align:center;"><img style="width:40px;" src="images/users.png"></div>
+				<div style="margin-top:5px;color:#A9ABB0;text-align:center;">Number of users</div>
+				<div style="margin-top:10px;">
+					<div id="no-of-users-div">
+						<input style="float:left;min-width:135px;width:50%;padding:13px;" class="custom-input transparent no-border" id="no-of-users" onblur="enableOTP(this);" type="text" placeholder="1" data-role="none">
+						<img style="float:right;width:40px;" src="images/down-arrow.png">
+						<img style="float:right;width:40px;" src="images/up-arrow.png">
+						<div class="clear"></div>
+					</div>
+				</div>
+			</div>
+			<div id="register-3-payment-summary-div">
+				<div style="text-align:center;"><img style="width:40px;" src="images/checkout.png"></div>
+				<div style="margin-top:5px;color:#A9ABB0;text-align:center;">Payment Summary</div>
+				<div style="margin-top:10px;">
+					<div id="payment-summary-div">
+						<table id="summary-tbl">	
+							<tr>
+								<td class="gray-text">
+									Profile Setup
+								</td>
+								<td>
+									—
+								</td>
+								<td id="profile_setup">
+									Rs. 0
+								</td>
+							</tr>
+							<tr>
+								<td class="gray-text">
+									Feed Cost
+								</td>
+								<td>
+									-
+								</td>
+								<td id="feed_cost">
+									Rs. 0
+								</td>
+							</tr>
+							<tr>
+								<td class="gray-text">
+									Chat Option
+								</td>
+								<td>
+									-
+								</td>
+								<td id="chat_cost">
+									Rs. 0
+								</td>
+							</tr>
+							<tr>
+								<td class="gray-text">
+									User Cost
+								</td>
+								<td id="user_count">
+									Rs. 0 x 0
+								</td>
+								<td id="user_cost">
+									Rs. 0
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									Total
+								</td>
+								<td id="invoice_value">
+									Rs. 8,000
+								</td>
+							</tr>
+						</table>
+						<div style="margin: 0;" id="send-otp-div" class="login-submit-container"><button id="make-payment" type="submit" onclick="makePayment();" class="btn-register-gray btn-small" data-role="none">Proceed to payment</button></div>
+						
+						<div id="secure-pay-div" data-role="popup" data-dismissible="false" data-overlay-theme="b">
+							<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+							<div style="padding:30px;" id="make-payment-card-details">
+								<input class="custom-input white sm" id="bank-name" type="text" placeholder="Bank Name" data-role="none">
+								<input class="custom-input white sm" id="branch-name" type="text" placeholder="Branch Number" data-role="none">
+								<input class="custom-input white sm input-with-icon" id="cheque-no" type="number" placeholder="Cheque No." data-role="none" style="float:left;">
+								<a href="#" onclick="openCamera();" id="open-camera" class="no-format open-camera"><i class="fa fa-camera-retro" aria-hidden="true"></i></a>
+								<div class="clear"></div>
+								
+								<div style="margin-top:25px;" id="add-coupoun" class="login-submit-container"><button id="btn-add-coupoun" type="submit" onclick="addCoupoun();" class="btn-register-gray btn-small" data-role="none">Add a Coupoun</button></div>
+								
+								<div style="margin-top:25px;" id="secure-pay" class="login-submit-container"><button id="btn-add-coupoun" type="submit" onclick="securePay();" class="btn-register-dark-blue btn-small" data-role="none">Secure pay</button></div>
+							</div>
+							
+						</div>
+						
+						<div id="add-coupoun-div" data-role="popup" data-dismissible="false" data-overlay-theme="b">
+							<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a>
+							<div style="padding:30px;" id="make-payment-card-details">
+								<input class="custom-input white sm" id="add-coupoun-code" type="text" placeholder="Coupoun Code" data-role="none">
+								<input class="custom-input white sm" onblur="$('#btn-add-coupoun-verify-otp').prop('disabled', false)" id="add-coupoun-seller-code" type="text" placeholder="Seller Code" data-role="none">
+								
+								<div style="margin-top:25px;" id="add-coupoun-verify-otp" class="login-submit-container"><button id="btn-add-coupoun-verify-otp" type="submit" class="btn-register-dark-blue btn-small" data-role="none" disabled>Verify via OTP</button></div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="custom-footer" style="text-align:center;text-shadow:none;">
+			<div class="footer-left"><a href="#" onclick="alert('cancel clicked');" class="no-format">Cancel</a></div>
+			<div class="footer-center">
+				<a href="#" class="no-format"><div id="footer-slide-1"></div></a>
+				<a href="#" class="no-format"><div id="footer-slide-2"></div></a>
+				<a href="#" class="no-format"><div id="footer-slide-3" class="selected"></div></a>
+			</div>
+			<div class="footer-right"><a href="#" onclick="$.mobile.changePage('#market-feed', 'fade');" class="no-format">Finish</a></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	<!-- MARKET FEED -->
+	<div data-role="page" id="market-feed">
+		<div class="custom-header" style="position:fixed;z-index:100;height:20px;width:100%;">
+			Market Feed
+			<a href="#" style="float:right;margin-right:30px;" onclick="showNewFeed();" class="no-format"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+			<div class="clear"></div>
+		</div>
+		<div id="market-feed-div" style="padding-bottom:55px;padding-top:50px;">
+			
+			
+			<!-- FEED BLOCK 2 -->
+			<!-- <div class="feed-container">
+				<div id="left" class="edit-market-feed-container">
+					<div class="edit-block-container">
+						<div><i class="fa fa-pencil-square-o" aria-hidden="true"></i></div>
+						<div class="edit-block-text">
+							Edit Feed
+						</div>
+					</div>
+				</div>
+				<table class="market-feed-tbl" id="market-feed-tbl">
+					<tr>
+						<td class="market-feed-img-container">
+							<img class="market-feed-company-icon" src="images/default-logo.png">
+						</td>
+						<td class="market-feed-td">
+							<div class="market-feed-company-name">
+								Company Name
+							</div>
+							<div class="market-feed-company-desc">
+								Description
+							</div>
+						</td>
+						<td class="market-feed-td">
+							<span class="market-feed-time">Time</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<span class="market-feeds-like"><i class="fa fa-heart" style="color:red;" aria-hidden="true"></i><span class="market-feed-likes-count">24 Likes</span> </span> 
+							<span class="market-feeds-like"><i class="fa fa-comments" style="color:green;" aria-hidden="true"></i><span class="market-feed-comments-count">34 Comments</span></span>
+						</td>
+					</tr>
+				</table>
+				<div class="cancel-market-feed-container" id="right">
+					<div class="cancel-block-container">
+						<div><i class="fa fa-times" aria-hidden="true"></i></div>
+						<div class="cancel-block-text">
+							Delete Feed
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+			<!-- FEED BLOCK 2 -->
+			<!-- <div class="feed-container">
+				<div id="left" class="edit-market-feed-container">
+					<div class="edit-block-container">
+						<div><i class="fa fa-pencil-square-o" aria-hidden="true"></i></div>
+						<div class="edit-block-text">
+							Edit Feed
+						</div>
+					</div>
+				</div>
+				<table class="market-feed-tbl" id="market-feed-tbl">
+					<tr>
+						<td class="market-feed-img-container">
+							<img class="market-feed-company-icon" src="images/default-logo.png">
+						</td>
+						<td class="market-feed-td">
+							<div class="market-feed-company-name">
+								Company Name
+							</div>
+							<div class="market-feed-company-desc">
+								Description
+							</div>
+						</td>
+						<td class="market-feed-td">
+							<span class="market-feed-time">Time</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<span class="market-feeds-like"><i class="fa fa-heart" style="color:red;" aria-hidden="true"></i><span class="market-feed-likes-count">24 Likes</span> </span> 
+							<span class="market-feeds-like"><i class="fa fa-comments" style="color:green;" aria-hidden="true"></i><span class="market-feed-comments-count">34 Comments</span></span>
+						</td>
+					</tr>
+				</table>
+				<div class="cancel-market-feed-container" id="right">
+					<div class="cancel-block-container">
+						<div><i class="fa fa-times" aria-hidden="true"></i></div>
+						<div class="cancel-block-text">
+							Delete Feed
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+			<!-- FEED BLOCK 2 -->
+			<!-- <div class="feed-container">
+				<div id="left" class="edit-market-feed-container">
+					<div class="edit-block-container">
+						<div><i class="fa fa-pencil-square-o" aria-hidden="true"></i></div>
+						<div class="edit-block-text">
+							Edit Feed
+						</div>
+					</div>
+				</div>
+				<table class="market-feed-tbl" id="market-feed-tbl">
+					<tr>
+						<td class="market-feed-img-container">
+							<img class="market-feed-company-icon" src="images/default-logo.png">
+						</td>
+						<td class="market-feed-td">
+							<div class="market-feed-company-name">
+								Company Name
+							</div>
+							<div class="market-feed-company-desc">
+								Description
+							</div>
+						</td>
+						<td class="market-feed-td">
+							<span class="market-feed-time">Time</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<span class="market-feeds-like"><i class="fa fa-heart" style="color:red;" aria-hidden="true"></i><span class="market-feed-likes-count">24 Likes</span> </span> 
+							<span class="market-feeds-like"><i class="fa fa-comments" style="color:green;" aria-hidden="true"></i><span class="market-feed-comments-count">34 Comments</span></span>
+						</td>
+					</tr>
+				</table>
+				<div class="cancel-market-feed-container" id="right">
+					<div class="cancel-block-container">
+						<div><i class="fa fa-times" aria-hidden="true"></i></div>
+						<div class="cancel-block-text">
+							Delete Feed
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+			<!-- FEED BLOCK 2 -->
+			<!-- <div class="feed-container">
+				<div id="left" class="edit-market-feed-container">
+					<div class="edit-block-container">
+						<div><i class="fa fa-pencil-square-o" aria-hidden="true"></i></div>
+						<div class="edit-block-text">
+							Edit Feed
+						</div>
+					</div>
+				</div>
+				<table class="market-feed-tbl" id="market-feed-tbl">
+					<tr>
+						<td class="market-feed-img-container">
+							<img class="market-feed-company-icon" src="images/default-logo.png">
+						</td>
+						<td class="market-feed-td">
+							<div class="market-feed-company-name">
+								Company Name
+							</div>
+							<div class="market-feed-company-desc">
+								Description
+							</div>
+						</td>
+						<td class="market-feed-td">
+							<span class="market-feed-time">Time</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<span class="market-feeds-like"><i class="fa fa-heart" style="color:red;" aria-hidden="true"></i><span class="market-feed-likes-count">24 Likes</span> </span> 
+							<span class="market-feeds-like"><i class="fa fa-comments" style="color:green;" aria-hidden="true"></i><span class="market-feed-comments-count">34 Comments</span></span>
+						</td>
+					</tr>
+				</table>
+				<div class="cancel-market-feed-container" id="right">
+					<div class="cancel-block-container">
+						<div><i class="fa fa-times" aria-hidden="true"></i></div>
+						<div class="cancel-block-text">
+							Delete Feed
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+			<!-- FEED BLOCK 2 -->
+			<!-- <div class="feed-container">
+				<div id="left" class="edit-market-feed-container">
+					<div class="edit-block-container">
+						<div><i class="fa fa-pencil-square-o" aria-hidden="true"></i></div>
+						<div class="edit-block-text">
+							Edit Feed
+						</div>
+					</div>
+				</div>
+				<table class="market-feed-tbl" id="market-feed-tbl">
+					<tr>
+						<td class="market-feed-img-container">
+							<img class="market-feed-company-icon" src="images/default-logo.png">
+						</td>
+						<td class="market-feed-td">
+							<div class="market-feed-company-name">
+								Company Name
+							</div>
+							<div class="market-feed-company-desc">
+								Description
+							</div>
+						</td>
+						<td class="market-feed-td">
+							<span class="market-feed-time">Time</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<span class="market-feeds-like"><i class="fa fa-heart" style="color:red;" aria-hidden="true"></i><span class="market-feed-likes-count">24 Likes</span> </span> 
+							<span class="market-feeds-like"><i class="fa fa-comments" style="color:green;" aria-hidden="true"></i><span class="market-feed-comments-count">34 Comments</span></span>
+						</td>
+					</tr>
+				</table>
+				<div class="cancel-market-feed-container" id="right">
+					<div class="cancel-block-container">
+						<div><i class="fa fa-times" aria-hidden="true"></i></div>
+						<div class="cancel-block-text">
+							Delete Feed
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+			<!-- FEED BLOCK 2 -->
+			<!-- <div class="feed-container">
+				<div id="left" class="edit-market-feed-container">
+					<div class="edit-block-container">
+						<div><i class="fa fa-pencil-square-o" aria-hidden="true"></i></div>
+						<div class="edit-block-text">
+							Edit Feed
+						</div>
+					</div>
+				</div>
+				<table class="market-feed-tbl" id="market-feed-tbl">
+					<tr>
+						<td class="market-feed-img-container">
+							<img class="market-feed-company-icon" src="images/default-logo.png">
+						</td>
+						<td class="market-feed-td">
+							<div class="market-feed-company-name">
+								Company Name
+							</div>
+							<div class="market-feed-company-desc">
+								Description
+							</div>
+						</td>
+						<td class="market-feed-td">
+							<span class="market-feed-time">Time</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<span class="market-feeds-like"><i class="fa fa-heart" style="color:red;" aria-hidden="true"></i><span class="market-feed-likes-count">24 Likes</span> </span> 
+							<span class="market-feeds-like"><i class="fa fa-comments" style="color:green;" aria-hidden="true"></i><span class="market-feed-comments-count">34 Comments</span></span>
+						</td>
+					</tr>
+				</table>
+				<div class="cancel-market-feed-container" id="right">
+					<div class="cancel-block-container">
+						<div><i class="fa fa-times" aria-hidden="true"></i></div>
+						<div class="cancel-block-text">
+							Delete Feed
+						</div>
+					</div>
+				</div>
+			</div> -->
+			
+			<!-- FEED BLOCK 2 -->
+			<!-- <div class="feed-container">
+				<div id="left" class="edit-market-feed-container">
+					<div class="edit-block-container">
+						<div><i class="fa fa-pencil-square-o" aria-hidden="true"></i></div>
+						<div class="edit-block-text">
+							Edit Feed
+						</div>
+					</div>
+				</div>
+				<table class="market-feed-tbl" id="market-feed-tbl">
+					<tr>
+						<td class="market-feed-img-container">
+							<img class="market-feed-company-icon" src="images/default-logo.png">
+						</td>
+						<td class="market-feed-td">
+							<div class="market-feed-company-name">
+								Company Name
+							</div>
+							<div class="market-feed-company-desc">
+								Description
+							</div>
+						</td>
+						<td class="market-feed-td">
+							<span class="market-feed-time">Time</span>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3">
+							<span class="market-feeds-like"><i class="fa fa-heart" style="color:red;" aria-hidden="true"></i><span class="market-feed-likes-count">24 Likes</span> </span> 
+							<span class="market-feeds-like"><i class="fa fa-comments" style="color:green;" aria-hidden="true"></i><span class="market-feed-comments-count">34 last</span></span>
+						</td>
+					</tr>
+				</table>
+				<div class="cancel-market-feed-container" id="right">
+					<div class="cancel-block-container">
+						<div><i class="fa fa-times" aria-hidden="true"></i></div>
+						<div class="cancel-block-text">
+							Delete Feed
+						</div>
+					</div>
+				</div>
+			</div> -->
+		</div>
+		
+		<div class="custom-footer" style="text-align:center;text-shadow:none;position:fixed;height:30px;">
+			<div class="footer-block"><i class="fa fa-bars fa-2x" style="color:#FFD900;" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-gift fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-comments fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-ellipsis-h fa-2x" aria-hidden="true"></i></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	
+	
+	<!-- ACTIVE OFFERS -->
+	<div data-role="page" id="active-offers">
+		<div class="custom-header" style="position:fixed;z-index:100;height:20px;width:100%;">
+			Active Offers
+			<a href="#" style="float:right;margin-right:30px;" onclick="addOffers();" class="no-format"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+			<div class="clear"></div>
+		</div>
+		<div id="active-offers-div" style="padding-bottom:55px;padding-top:50px;">
+			<!-- FEED BLOCK 1 -->
+			<!-- <div class="offer-container">
+				<div id="left" class="edit-active-offers-container">
+					<div class="renew-block-container">
+						<div><i class="fa fa-refresh" aria-hidden="true"></i></div>
+						<div class="renew-block-text">
+							Renew
+						</div>
+					</div>
+				</div>
+				<table class="active-offer-tbl" id="active-offer-tbl">
+					<tr>
+						<td class="active-offer-img-container">
+							<div class="coupoun-code-red">CODE</div>
+						</td>
+						<td class="active-offer-td">
+							<div class="active-offer-company-name">
+								Coupoun Name
+							</div>
+							<div class="active-offer-company-desc">
+								Description
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<span class="active-offers-usage"><i class="fa fa-bar-chart" style="color:#51A7F9;" aria-hidden="true"></i><span class="active-offers-usage-count">No usage</span> </span> 
+							<span class="active-offers-duration"><i class="fa fa-times" style="color:#EC5D57;" aria-hidden="true"></i><span class="active-offers-duration-count">Unlimited</span></span>
+						</td>
+					</tr>
+				</table>
+			</div> -->
+			
+			<!-- FEED BLOCK 1 -->
+			<!-- <div class="offer-container">
+				<div id="left" class="edit-active-offers-container">
+					<div class="renew-block-container">
+						<div><i class="fa fa-refresh" aria-hidden="true"></i></div>
+						<div class="renew-block-text">
+							Renew
+						</div>
+					</div>
+				</div>
+				<table class="active-offer-tbl" id="active-offer-tbl">
+					<tr>
+						<td class="active-offer-img-container">
+							<div class="coupoun-code-orange">CODE</div>
+						</td>
+						<td class="active-offer-td">
+							<div class="active-offer-company-name">
+								Coupoun Name
+							</div>
+							<div class="active-offer-company-desc">
+								Description
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<span class="active-offers-usage"><i class="fa fa-bar-chart" style="color:#51A7F9;" aria-hidden="true"></i><span class="active-offers-usage-count">1 used this</span> </span> 
+							<span class="active-offers-duration"><i class="fa fa-times" style="color:#EC5D57;" aria-hidden="true"></i><span class="active-offers-duration-count">Unlimited</span></span>
+						</td>
+					</tr>
+				</table>
+			</div> -->
+			
+			<!-- FEED BLOCK 1 -->
+			<!-- <div class="offer-container">
+				<div id="left" class="edit-active-offers-container">
+					<div class="renew-block-container">
+						<div><i class="fa fa-refresh" aria-hidden="true"></i></div>
+						<div class="renew-block-text">
+							Renew
+						</div>
+					</div>
+				</div>
+				<table class="active-offer-tbl" id="active-offer-tbl">
+					<tr>
+						<td class="active-offer-img-container">
+							<div class="coupoun-code-green">CODE</div>
+						</td>
+						<td class="active-offer-td">
+							<div class="active-offer-company-name">
+								Coupoun Name
+							</div>
+							<div class="active-offer-company-desc">
+								Description
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<span class="active-offers-usage"><i class="fa fa-bar-chart" style="color:#51A7F9;" aria-hidden="true"></i><span class="active-offers-usage-count">93 Used this</span> </span> 
+							<span class="active-offers-duration"><i class="fa fa-times" style="color:#EC5D57;" aria-hidden="true"></i><span class="active-offers-duration-count">Unlimited</span></span>
+						</td>
+					</tr>
+				</table>
+			</div> -->
+			
+			<!-- FEED BLOCK 1 -->
+			<!-- <div class="offer-container">
+				<div id="left" class="edit-active-offers-container">
+					<div class="renew-block-container">
+						<div><i class="fa fa-refresh" aria-hidden="true"></i></div>
+						<div class="renew-block-text">
+							Renew
+						</div>
+					</div>
+				</div>
+				<table class="active-offer-tbl" id="active-offer-tbl">
+					<tr>
+						<td class="active-offer-img-container">
+							<div class="coupoun-code-yellow">CODE</div>
+						</td>
+						<td class="active-offer-td">
+							<div class="active-offer-company-name">
+								Coupoun Name
+							</div>
+							<div class="active-offer-company-desc">
+								Description
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<span class="active-offers-usage"><i class="fa fa-bar-chart" style="color:#51A7F9;" aria-hidden="true"></i><span class="active-offers-usage-count">No Usage</span> </span> 
+							<span class="active-offers-duration"><i class="fa fa-times" style="color:#EC5D57;" aria-hidden="true"></i><span class="active-offers-duration-count">October 25, 2016</span></span>
+						</td>
+					</tr>
+				</table>
+			</div> -->
+			
+			<!-- FEED BLOCK 1 -->
+			<div class="offer-container">
+				<div id="left" class="edit-active-offers-container">
+					<div class="renew-block-container">
+						<div><i class="fa fa-refresh" aria-hidden="true"></i></div>
+						<div class="renew-block-text">
+							Renew
+						</div>
+					</div>
+				</div>
+				<table class="active-offer-tbl" id="active-offer-tbl">
+					<tr>
+						<td class="active-offer-img-container">
+							<div class="coupoun-code-purple">CODE</div>
+						</td>
+						<td class="active-offer-td">
+							<div class="active-offer-company-name">
+								Coupoun Name
+							</div>
+							<div class="active-offer-company-desc">
+								Description
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<span class="active-offers-usage"><i class="fa fa-bar-chart" style="color:#51A7F9;" aria-hidden="true"></i><span class="active-offers-usage-count">No Usage</span> </span> 
+							<span class="active-offers-duration"><i class="fa fa-times" style="color:#EC5D57;" aria-hidden="true"></i><span class="active-offers-duration-count">October 25, 2016</span></span>
+						</td>
+					</tr>
+				</table>
+			</div> 
+			
+		</div>
+		
+		<div class="custom-footer" style="text-align:center;text-shadow:none;position:fixed;height:30px;">
+			<div class="footer-block"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-gift fa-2x" style="color:#FFD900;" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-comments fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-ellipsis-h fa-2x" aria-hidden="true"></i></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	
+	<!-- CHATS -->
+	<div data-role="page" id="chats">
+		<div class="custom-header" style="position:fixed;z-index:100;height:20px;width:100%;">
+			Chats
+			<a href="#" style="float:right;margin-right:30px;" class="no-format"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+			<div class="clear"></div>
+		</div>
+		<div id="active-offers-div" style="padding-bottom:55px;padding-top:50px;">
+			
+		</div>
+		
+		<div class="custom-footer" style="text-align:center;text-shadow:none;position:fixed;height:30px;">
+			<div class="footer-block"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-gift fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-comments fa-2x" style="color:#FFD900;" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-ellipsis-h fa-2x" aria-hidden="true"></i></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	
+	<!-- OPTIONS -->
+	<div data-role="page" id="options">
+		<div class="custom-header">
+			Options
+		</div>
+		<div id="active-offers-div" style="padding-bottom:55px;padding-top:50px;">
+			<table class="options-tbl">
+				<tr>
+					<td class="options-tbl-td">
+						<div><img src="images/company-account.png"></div>
+						<div>Company Account</div>
+					</td>
+					<td class="options-tbl-td">
+						<div><img src="images/company-account-color.png"></div>
+						<div>Company Profile</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="options-tbl-td">
+						<div><img src="images/company-profile-color.png"></div>
+						<div>User Profile</div>
+					</td>
+					<td class="options-tbl-td">
+						<div><img src="images/app-support.png"></div>
+						<div>App Support</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div class="custom-footer" style="text-align:center;text-shadow:none;position:fixed;height:30px;">
+			<div class="footer-block"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-gift fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-comments fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-ellipsis-h fa-2x" style="color:#FFD900;" aria-hidden="true"></i></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	
+	<!-- ADD FEED -->
+	<div data-role="page" id="add-feed">
+		<div class="custom-header" style="padding:10px 15px;position:fixed;z-index:100;height:20px;width:93%;text-align:center;">
+			<a href="#" style="float:left;font-weight:normal;" onclick="backMarketFeed();" class="no-format"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
+			New Feed
+			<a href="#" style="float:right;font-weight:normal;" onclick="addFeed();" class="no-format"><i class="fa fa-check-square" aria-hidden="true"></i></a>
+			<div class="clear"></div>
+		</div>
+		<div id="add-feed-div" style="padding-bottom:55px;padding-top:50px;">
+			<div id="active-feed-container" style="border-bottom:1px solid #E6E6E6;">
+				<div id="add-feed-logo-div">
+					<img src="images/default-logo.png">
+				</div>
+				<div id="add-feed-desc-div">
+					<div id="add-feed-company-name">Company name — branch</div>
+					<div id="add-feed-company-tag">@company_tag</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div style="padding-top:15px;">
+				<textarea id="add-feed-content" class="cutom-textarea" rows="10" placeholder="Start typing here"></textarea>
+			</div>
+		</div>
+		
+		<div class="custom-footer" style="text-align:center;text-shadow:none;position:fixed;height:30px;">
+			<div class="footer-block"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-gift fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-comments fa-2x" style="color:#FFD900;" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-ellipsis-h fa-2x" aria-hidden="true"></i></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	
+	<!-- ADD COUPOUN -->
+	<div data-role="page" id="add-coupoun-screen">
+		<div class="custom-header" style="padding:10px 15px;position:fixed;z-index:100;height:20px;width:93%;text-align:center;">
+			<a href="#" style="float:left;font-weight:normal;" onclick="backCoupounScreen();" class="no-format"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
+			New Coupoun
+			<a href="#" style="float:right;font-weight:normal;" onclick="addCoupoun();" class="no-format"><i class="fa fa-check-square" aria-hidden="true"></i></a>
+			<div class="clear"></div>
+		</div>
+		<div id="add-coupoun-div" style="padding-bottom:55px;padding-top:50px;text-align:center;">
+			<input class="custom-input transparent bottom-border" id="add-coupoun-code" type="text" placeholder="Add a code here" data-role="none">
+			<input class="custom-input transparent bottom-border" id="add-coupoun-title" type="text" placeholder="Add a title here" data-role="none">
+			<input class="custom-input transparent bottom-border" id="add-coupoun-desc" type="text" placeholder="Add description here" data-role="none">
+		</div>
+		
+		<div class="custom-footer" style="text-align:center;text-shadow:none;position:fixed;height:30px;">
+			<div class="footer-block"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-gift fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-comments fa-2x" style="color:#FFD900;" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-ellipsis-h fa-2x" aria-hidden="true"></i></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	
+	<!-- MAP -->
+	
+	<div data-role="page" id="map_page">
+		<div class="custom-header" style="padding:10px 15px;position:fixed;z-index:100;height:20px;width:93%;text-align:center;">
+			<a href="#" style="float:left;font-weight:normal;" class="no-format"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
+			Map
+			<a href="#" id="open_map" onclick="displayMap()" style="float:right;font-weight:normal;" class="no-format"><i class="fa fa-check-square" aria-hidden="true"></i></a>
+			<div class="clear"></div>
+		</div>
+		<div id="map_div" style="padding-bottom:55px;padding-top:50px;">
+			hello all, trying to display map here....
+		</div>
+		
+		<div class="custom-footer" style="text-align:center;text-shadow:none;position:fixed;height:30px;">
+			<div class="footer-block"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-gift fa-2x" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-comments fa-2x" style="color:#FFD900;" aria-hidden="true"></i></div>
+			<div class="footer-block"><i class="fa fa-ellipsis-h fa-2x" aria-hidden="true"></i></div>
+			<div class="clear"></div>
+		</div>
+	</div>
+</body>
+</html>
